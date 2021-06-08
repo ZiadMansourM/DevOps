@@ -1,0 +1,78 @@
+# This is a basic monitoring script for a website
+# by: Ziad Mansour Mohamed
+
+name: SiteMonitor
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  # Triggers the workflow every 10 min
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    # minute (0 - 59) | hour (0 - 23) | day of the month (1 - 31) | month (1 - 12 or JAN-DEC) | day of the week (0 - 6 or SUN-SAT)
+    - cron:  "*/5 * * * *"
+
+jobs:
+  # This workflow contains a Two jobs called "PING - ALERT"
+
+
+  # First Job
+  PING:
+    name: "Run Tests on code"
+    # The Runner would run on the latest version of ubuntu server
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Task[1]: Get Clone Key on the Runner
+      - name: Prepare the Clone Key on the runner && clone
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SSH_Clone_KEY" > ~/.ssh/Clone.key
+          chmod 600 ~/.ssh/Clone.key
+          sudo cat >>~/.ssh/config <<END
+            Host MonitorRepo
+            Hostname github.com
+            User git
+            IdentityFile ~/.ssh/Clone.key
+          END
+          git clone MonitorRepo:ZiadMansourM/site_monitor.git ~/Monitor
+        env:
+          SSH_Clone_KEY: ${{ secrets.SSH_Monitor_Clone_KEY }}
+      
+      # Task[2]: create bach scripts to ease Setting the Enviroment
+      - name: Creat SetEnviroment.sh scripts
+        run: |
+          cat >>~/SetEnviroment.sh<<END
+          #!/bin/bash
+          cd ~/Monitor
+          echo "install python ..."
+          sudo apt install python3 
+          python3 ––version
+          sudo apt install python3-pip
+          pip3 --version
+          sudo apt install python3-venv
+          echo "create vertial enviroment ..."
+          python3 -m venv venv
+          source venv/bin/activate
+          echo "install dependancies"
+          pip install -r requirements.txt
+          END
+          chmod +x ~/SetEnviroment.sh
+      
+      # Task[3]: Run SetEnviroment script
+      - name: Run SetEnviroment.sh scripts
+        run: ~/SetEnviroment.sh
+        
+      # Task[4]: Run MonitScript.py
+      - name: execute .py script
+        env: 
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          DEVOPS_EMAIL: ${{ secrets.DEVOPS_EMAIL }}
+          TEAM_LEADER_EMAIL: ${{ secrets.TEAM_LEADER_EMAIL }}
+        run: python3 ~/Monitor/MonitorScript.py

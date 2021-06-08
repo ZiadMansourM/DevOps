@@ -1,0 +1,6 @@
+REF: https://stackoverflow.com/questions/10585978/how-to-get-the-percentage-of-memory-free-with-a-linux-command
+
+MEMORY USAGE:
+    free | grep Mem | awk '{print $3/$2 * 100.0}'
+CPU USAGE:
+    echo $[100-$(vmstat 1 2|tail -1|awk '{print $15}')]

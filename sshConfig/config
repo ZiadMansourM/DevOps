@@ -1,0 +1,11 @@
+Host DevOpsCMPN
+    HostName 3.138.118.110
+    IdentityFile "C:\Users\ziadm\Desktop\DevOps\MainServerCMPNKEY\DevOpsGeekKey.pem"
+
+Host LoadBalance
+    HostName 18.116.74.204
+    IdentityFile "C:\Users\ziadm\Desktop\DevOps\LoadBalancing\LoadBalance.pem"
+
+Host *
+    User ubuntu
+    StrictHostKeyChecking no
