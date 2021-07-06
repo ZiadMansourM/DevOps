@@ -8,4 +8,10 @@ In this project 5 teams of 18 students are competing in building a website like 
 * Testing 4 members
 * Mobile 4 members
 
-I'm glad that I had the chance to be the DevOps
+I'm glad that I had the chance to be the DevOps, and to work with such an amazing team. Really enjoyed my time ❤
+
+# Tasks
+- [X] CI/CD PipLines
+- [X] Docker
+- [X] Load Balancing
+- [X] Monitoring 
